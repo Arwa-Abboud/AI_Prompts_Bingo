@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tools & Skills Bingo — Passive Blessings</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f3;min-height:100vh;padding:2rem 1rem;color:#1a1a1a}
+  .container{max-width:860px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+  h1{font-size:20px;font-weight:600;color:#1a1a1a}
+  .subtitle{font-size:13px;color:#666;margin-top:4px}
+  .meta{display:flex;align-items:center;gap:12px}
+  .progress{font-size:13px;color:#555}
+  button{font-size:13px;padding:6px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;transition:background 0.15s}
+  button:hover{background:#f0f0f0}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#555}
+  .legend-dot{width:10px;height:10px;border-radius:50%}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .cell{border:1px solid #e0e0e0;border-radius:10px;padding:12px 10px;cursor:pointer;transition:all 0.15s;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;user-select:none}
+  .cell:hover{border-color:#aaa;filter:brightness(0.97)}
+  .cell.stamped .prompt-text{opacity:0.75}
+  .cat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  .prompt-text{font-size:12px;line-height:1.4;color:#1a1a1a}
+  .tick{font-size:11px;font-weight:700;margin-top:7px}
+  .footer{text-align:center;margin-top:2rem;font-size:12px;color:#999}
+
+  /* Category colours */
+  .cat-chatgpt       {background:#fff8ed;border-color:#f5c97a}
+  .cat-chatgpt       .cat-label{color:#b36b00}
+  .cat-chatgpt.stamped{background:#ffefc0;border-color:#d4960a}
+  .cat-chatgpt       .tick{color:#b36b00}
+
+  .cat-research      {background:#edf5ff;border-color:#90bef5}
+  .cat-research      .cat-label{color:#1a5fb4}
+  .cat-research.stamped{background:#c8deff;border-color:#3275d8}
+  .cat-research      .tick{color:#1a5fb4}
+
+  .cat-design        {background:#fdf0fb;border-color:#e4a8e0}
+  .cat-design        .cat-label{color:#8b2f88}
+  .cat-design.stamped{background:#f5cff2;border-color:#c44bbf}
+  .cat-design        .tick{color:#8b2f88}
+
+  .cat-productivity  {background:#edfaf3;border-color:#7ed6a8}
+  .cat-productivity  .cat-label{color:#1d7a4c}
+  .cat-productivity.stamped{background:#c0f0d8;border-color:#27a866}
+  .cat-productivity  .tick{color:#1d7a4c}
+
+  .cat-video         {background:#f0eeff;border-color:#b8a8f0}
+  .cat-video         .cat-label{color:#4a2fa8}
+  .cat-video.stamped {background:#dcd4ff;border-color:#7a5ce8}
+  .cat-video         .tick{color:#4a2fa8}
+
+  @media(max-width:540px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .cell{min-height:80px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>AI Tools & Skills Bingo</h1>
+      <div class="subtitle">Passive Blessings × Edusync Workshop — complete each challenge and tick it off</div>
+    </div>
+    <div class="meta">
+      <span class="progress" id="prog">0 / 25 done</span>
+      <button onclick="reset()">Reset</button>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#f5c97a"></div> ChatGPT</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#90bef5"></div> Research</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e4a8e0"></div> Design</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7ed6a8"></div> Productivity</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#b8a8f0"></div> Video & Voice</div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="footer">Passive Blessings Saturday Workshop Series · May 2, 2026</div>
+</div>
+<script>
+const items=[
+  {cat:"chatgpt",  label:"ChatGPT",     text:"Use ChatGPT to draft a professional email from bullet points"},
+  {cat:"research", label:"Research",    text:"Search a topic on Perplexity and get a cited answer"},
+  {cat:"design",   label:"Design",      text:"Generate an image in Canva AI using a text prompt"},
+  {cat:"productivity",label:"Productivity",text:"Record a meeting and get an AI transcript with Otter.ai or Fireflies"},
+  {cat:"video",    label:"Video & Voice",text:"Create a short AI avatar video using HeyGen or Runway"},
+
+  {cat:"chatgpt",  label:"ChatGPT",     text:"Upload a PDF to ChatGPT and ask it to summarise the key points"},
+  {cat:"research", label:"Research",    text:"Use Gemini in Google Docs to draft or rewrite a section"},
+  {cat:"design",   label:"Design",      text:"Resize a design for multiple platforms in one click with Canva Magic Resize"},
+  {cat:"productivity",label:"Productivity",text:"Build a simple automation between two apps using Make or Zapier"},
+  {cat:"video",    label:"Video & Voice",text:"Add AI-generated subtitles to a video automatically"},
+
+  {cat:"chatgpt",  label:"ChatGPT",     text:"Ask ChatGPT to build a structured meeting agenda from a topic"},
+  {cat:"research", label:"Research",    text:"Compare two products or services using an AI research tool"},
+  {cat:"design",   label:"Design",      text:"Generate a full presentation from an outline using AI (Gamma or Canva)"},
+  {cat:"productivity",label:"Productivity",text:"Create a prioritised task list for your week using AI"},
+  {cat:"video",    label:"Video & Voice",text:"Convert a written script into an AI voiceover using ElevenLabs or Murf"},
+
+  {cat:"chatgpt",  label:"ChatGPT",     text:"Paste a spreadsheet into ChatGPT and ask for analysis or insights"},
+  {cat:"research", label:"Research",    text:"Summarise a long report or article in 5 bullet points with AI"},
+  {cat:"design",   label:"Design",      text:"Use AI to rewrite a paragraph to sound more professional"},
+  {cat:"productivity",label:"Productivity",text:"Use Notion AI to summarise or generate content inside a page"},
+  {cat:"video",    label:"Video & Voice",text:"Record a Loom video and use its AI summary to share key points"},
+
+  {cat:"chatgpt",  label:"ChatGPT",     text:"Use ChatGPT to prepare 10 likely interview questions for a role"},
+  {cat:"research", label:"Research",    text:"Upload documents to NotebookLM and ask questions across all of them"},
+  {cat:"design",   label:"Design",      text:"Write a social media post with AI and get 3 alternative versions"},
+  {cat:"productivity",label:"Productivity",text:"Use Microsoft Copilot inside Word or Excel to generate or analyse content"},
+  {cat:"video",    label:"Video & Voice",text:"Use AI to instantly translate a document or message into another language"}
+];
+
+const state=new Array(25).fill(false);
+const grid=document.getElementById('grid');
+
+function render(){
+  grid.innerHTML='';
+  items.forEach((item,i)=>{
+    const cell=document.createElement('div');
+    cell.className=`cell cat-${item.cat}${state[i]?' stamped':''}`;
+    cell.innerHTML=`<div><div class="cat-label">${item.label}</div><div class="prompt-text">${item.text}</div></div>${state[i]?`<div class="tick">✓ done</div>`:''}`;
+    cell.onclick=()=>{state[i]=!state[i];render()};
+    grid.appendChild(cell);
+  });
+  document.getElementById('prog').textContent=state.filter(Boolean).length+' / 25 done';
+}
+function reset(){state.fill(false);render();}
+render();
+</script>
+</body>
+</html>
