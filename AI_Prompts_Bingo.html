@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Prompts Bingo — Passive Blessings</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f3;min-height:100vh;padding:2rem 1rem;color:#1a1a1a}
+  .container{max-width:720px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+  h1{font-size:20px;font-weight:600;color:#1a1a1a}
+  .subtitle{font-size:13px;color:#666;margin-top:4px}
+  .meta{display:flex;align-items:center;gap:12px}
+  .progress{font-size:13px;color:#555}
+  button{font-size:13px;padding:6px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;transition:background 0.15s}
+  button:hover{background:#f0f0f0}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .cell{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px 12px;cursor:pointer;transition:all 0.15s;min-height:100px;display:flex;flex-direction:column;justify-content:space-between;user-select:none}
+  .cell:hover{border-color:#aaa;background:#fafafa}
+  .cell.stamped{background:#e8f8f1;border-color:#1D9E75}
+  .cell.stamped .prompt-text{color:#0a5c3f}
+  .cell.stamped .num{color:#1D9E75}
+  .num{font-size:11px;font-weight:600;color:#aaa;margin-bottom:6px}
+  .prompt-text{font-size:12.5px;color:#222;line-height:1.45}
+  .tick{font-size:11px;font-weight:600;color:#1D9E75;margin-top:8px}
+  .footer{text-align:center;margin-top:2rem;font-size:12px;color:#999}
+  @media(max-width:500px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .cell{min-height:80px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>AI Prompts Bingo</h1>
+      <div class="subtitle">Passive Blessings × Edusync Workshop — tick each prompt once you've tried it</div>
+    </div>
+    <div class="meta">
+      <span class="progress" id="prog">0 / 16 tried</span>
+      <button onclick="reset()">Reset</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="footer">Passive Blessings Saturday Workshop Series · May 2, 2026</div>
+</div>
+<script>
+const prompts=[
+  {num:"01",text:"Act as a [expert role] and help me with..."},
+  {num:"02",text:"Give me 5 options, then tell me which you'd recommend and why"},
+  {num:"03",text:"Explain this like I'm 10 years old"},
+  {num:"04",text:"Think step by step before answering"},
+  {num:"05",text:"What's missing from this? What would make it stronger?"},
+  {num:"06",text:"Give me feedback as if you were a [hiring manager / investor / editor]"},
+  {num:"07",text:"Rewrite this but make it more [concise / professional / casual]"},
+  {num:"08",text:"What questions should I be asking that I'm not asking?"},
+  {num:"09",text:"Summarise this in 5 bullet points: [paste text]"},
+  {num:"10",text:"What are the pros and cons of [decision]?"},
+  {num:"11",text:"What are the most common mistakes people make when doing [X]?"},
+  {num:"12",text:"Give me 10 ideas for [topic], then rank them by impact"},
+  {num:"13",text:"Write this in the tone of [brand / person / style]"},
+  {num:"14",text:"Play devil's advocate — what's wrong with this idea?"},
+  {num:"15",text:"What assumptions am I making that could be wrong?"},
+  {num:"16",text:"If this fails, what would be the most likely reason?"}
+];
+const state=new Array(16).fill(false);
+const grid=document.getElementById('grid');
+function render(){
+  grid.innerHTML='';
+  prompts.forEach((p,i)=>{
+    const cell=document.createElement('div');
+    cell.className='cell'+(state[i]?' stamped':'');
+    cell.innerHTML=`<div><div class="num">${p.num}</div><div class="prompt-text">${p.text}</div></div>${state[i]?'<div class="tick">✓ tried</div>':''}`;
+    cell.onclick=()=>{state[i]=!state[i];render()};
+    grid.appendChild(cell);
+  });
+  document.getElementById('prog').textContent=state.filter(Boolean).length+' / 16 tried';
+}
+function reset(){state.fill(false);render();}
+render();
+</script>
+</body>
+</html>
